@@ -1,18 +1,56 @@
 {
+  "env": {
+    "node": true
+  },
   "parser": "@typescript-eslint/parser",
-  "extends": ["prettier", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+  "extends": ["prettier", "plugin:prettier/recommended", "plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/eslint-recommended"],
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "tsconfig.json"
   },
   "rules": {
-    "@typescript-eslint/explicit-member-accessibility": 0,
-    "@typescript-eslint/explicit-function-return-type": 0,
-    "@typescript-eslint/no-parameter-properties": 0,
-    "@typescript-eslint/interface-name-prefix": 0,
-    "@typescript-eslint/explicit-module-boundary-types": 0,
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-var-requires": "off"
-  }
+    // "@typescript-eslint/explicit-member-accessibility": 0,
+    // "@typescript-eslint/explicit-function-return-type": 0,
+    // "@typescript-eslint/no-parameter-properties": 0,
+    // "@typescript-eslint/interface-name-prefix": 0,
+    // "@typescript-eslint/explicit-module-boundary-types": 0,
+    // "@typescript-eslint/no-explicit-any": "off",
+    // "@typescript-eslint/ban-types": "off",
+    // "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "prettier/prettier": "error",
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": ["return", "throw", "case", "default", "function"]
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "block-like"
+      },
+      {
+        "blankLine": "always",
+        "prev": "block-like",
+        "next": "*"
+      },
+      { "blankLine": "always", "prev": ["const", "let", "var"], "next": "*" },
+      {
+        "blankLine": "any",
+        "prev": ["const", "let", "var"],
+        "next": ["const", "let", "var"]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["app.ts"],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off"
+      }
+    }
+  ]
 }

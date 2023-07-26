@@ -1,14 +1,14 @@
-import 'reflect-metadata';
+import { FilesController } from '@/router/files/files.controller';
+import { FilesService } from '@/router/files/files.service';
+import { LOG_FORMAT, NODE_ENV, ORIGIN, PORT } from '@config';
+import { ErrorMiddleware } from '@middlewares/error.middleware';
+import { logger, stream } from '@utils/logger';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
-import { ErrorMiddleware } from '@middlewares/error.middleware';
-import { logger, stream } from '@utils/logger';
-import { FilesRoute } from './routes/files.route';
 
 export class App {
   app: express.Application;
@@ -22,9 +22,9 @@ export class App {
   }
 
   listen() {
-    this.#initializeMiddlewares();
-    this.#initializeRoutes();
-    this.#initializeErrorHandling();
+    this.initializeMiddlewares();
+    this.initializeRouter();
+    this.initializeErrorHandling();
 
     this.app.listen(this.port, () => {
       logger.info(`=======================================================`);
@@ -37,9 +37,9 @@ export class App {
     return this.app;
   }
 
-  #initializeMiddlewares() {
+  private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
+    this.app.use(cors({ origin: ORIGIN }));
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
@@ -47,13 +47,14 @@ export class App {
     this.app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 800000 }));
   }
 
-  #initializeRoutes() {
-    const filesRoute = new FilesRoute();
+  private initializeRouter() {
+    const filesService = new FilesService();
+    const filesController = new FilesController(filesService);
 
-    this.app.use('/', filesRoute.router);
+    this.app.use('/files', filesController.router);
   }
 
-  #initializeErrorHandling() {
+  private initializeErrorHandling() {
     this.app.use(ErrorMiddleware);
   }
 }
